@@ -1,6 +1,7 @@
 import 'package:cricket/common/common.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:cricket/models/models.dart';
+import 'dart:convert';
 
 class SessionManagerServcie {
   late FlutterSecureStorage secureStorage;
@@ -44,6 +45,23 @@ class SessionManagerServcie {
 
   Future<String?> getUserId() async {
     return await secureStorage.read(key: keyUserId);
+  }
+
+  Future<void> saveUserData(User user) async {
+    final userData = user.toJson();
+    await secureStorage.write(key: keyUserData, value: jsonEncode(userData));
+  }
+
+  Future<User?> getUserData() async {
+    final userData = await secureStorage.read(key: keyUserData);
+    if (userData != null) {
+      return User.fromJson(jsonDecode(userData));
+    }
+    return null;
+  }
+
+  Future<void> deleteUserData() async {
+    await secureStorage.delete(key: keyUserData);
   }
 
 }

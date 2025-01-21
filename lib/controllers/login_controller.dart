@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:cricket/common/common.dart';
-import 'package:cricket/models/models.dart';
 import 'package:cricket/services/services.dart';
+import 'package:cricket/models/models.dart';
+
 
 class LoginController extends ChangeNotifier {
   ApiCallStatus _apiStatus = ApiCallStatus.success;
@@ -58,7 +59,7 @@ class LoginController extends ChangeNotifier {
         final user = User.fromJson(response.data['user']);
 
         await SessionManagerServcie().saveAuthToken(token);
-        // await SessionManagerServcie().saveUserData(user);
+        await SessionManagerServcie().saveUserData(user);
 
         _apiStatus = ApiCallStatus.success;
         notifyListeners();

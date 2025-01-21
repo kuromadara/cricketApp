@@ -3,6 +3,7 @@ export 'theme/theme.dart';
 export 'theme/util.dart';
 export 'widgets/api_handle_ui_widget.dart';
 export 'widgets/snackbar.dart';
+export 'widgets/user_info_card.dart';
 export 'widgets/api_widgets/empty_data_widget.dart';
 export 'widgets/api_widgets/loading_widget.dart';
 export 'widgets/api_widgets/network_error_widget.dart';
