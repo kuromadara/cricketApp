@@ -12,6 +12,7 @@ class PlayersController extends ChangeNotifier {
   int _lastPage = 1;
   int _perPage = 10;
   bool _isLoadingMore = false;
+  List<Player> _selectedPlayers = [];
 
   List<Player> get players => _players;
   ApiCallStatus get apiStatus => _apiStatus;
@@ -21,6 +22,7 @@ class PlayersController extends ChangeNotifier {
   bool get hasMore => _currentPage < _lastPage;
   bool get hasPrevious => _currentPage > 1;
   bool get isLoadingMore => _isLoadingMore;
+  List<Player> get selectedPlayers => _selectedPlayers;
 
   Future<void> fetchPlayers({int? page}) async {
     try {
@@ -117,5 +119,75 @@ class PlayersController extends ChangeNotifier {
   Future<void> refreshPlayers() async {
     _currentPage = 1;
     await fetchPlayers(page: 1);
+  }
+
+  Future<void> fetchPlayersByIds(List<int> playerIds) async {
+    // Clear previous selected players
+    _selectedPlayers.clear();
+
+    // Validate input
+    if (playerIds.isEmpty) {
+      debugPrint('No player IDs provided');
+      _apiStatus = ApiCallStatus.empty;
+      notifyListeners();
+      return;
+    }
+
+    try {
+      _apiStatus = ApiCallStatus.loading;
+      notifyListeners();
+
+      debugPrint('Fetching players with IDs: $playerIds');
+
+      final response = await ApiBaseHelper.get(
+        '${dotenv.env['AUTH_APP']}players',
+        params: {
+          'ids': playerIds.join(','),
+        },
+      );
+
+      debugPrint('Response status code: ${response.statusCode}');
+      debugPrint('Response data: ${response.data}');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        
+        // Ensure data is not null and is a list
+        if (data != null && data['data'] is List) {
+          _selectedPlayers = (data['data'] as List)
+              .map((item) {
+                try {
+                  return Player.fromJson(item);
+                } catch (e) {
+                  debugPrint('Error parsing player: $e');
+                  return null;
+                }
+              })
+              .whereType<Player>() // Filter out any null values
+              .toList();
+
+          debugPrint('Fetched players count: ${_selectedPlayers.length}');
+
+          _apiStatus = _selectedPlayers.isEmpty 
+              ? ApiCallStatus.empty 
+              : ApiCallStatus.success;
+        } else {
+          debugPrint('Invalid response data format');
+          _apiStatus = ApiCallStatus.error;
+        }
+      } else {
+        debugPrint('Server returned an error status');
+        _apiStatus = ApiCallStatus.error;
+      }
+    } on DioException catch (error) {
+      _apiStatus = ApiCallStatus.error;
+      debugPrint('DioException fetching players by IDs: ${error.message}');
+      debugPrint('Error response: ${error.response?.data}');
+    } catch (e) {
+      _apiStatus = ApiCallStatus.error;
+      debugPrint('Unexpected error fetching players: $e');
+    } finally {
+      notifyListeners();
+    }
   }
 }

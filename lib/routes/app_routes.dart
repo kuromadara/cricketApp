@@ -20,6 +20,6 @@ class AppRoutes {
     },
     settings: (context) => const SettingsScreen(),
     stadium: (context) => const SettingsScreen(),
-    match: (context) => const SettingsScreen(),
+    match: (context) => const MatchScreen(),
   };
 }
