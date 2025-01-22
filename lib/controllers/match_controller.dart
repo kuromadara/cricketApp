@@ -113,4 +113,9 @@ class MatchController extends ChangeNotifier {
       rethrow;
     }
   }
+
+  void setSelectedMatch(MatchModel? match) {
+    _selectedMatch = match;
+    notifyListeners();
+  }
 }

@@ -19,7 +19,7 @@ class AppRoutes {
       return PlayerDetailsScreen(playerId: args['playerId']);
     },
     settings: (context) => const SettingsScreen(),
-    stadium: (context) => const SettingsScreen(),
+    stadium: (context) =>  StadiumImageScreen(),
     match: (context) => const MatchScreen(),
   };
 }

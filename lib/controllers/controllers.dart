@@ -4,3 +4,4 @@ export  'home_controller.dart';
 export  'players_controller.dart';
 export  'player_details_controller.dart';
 export  'match_controller.dart';
+export  'stadium_image_controller.dart';

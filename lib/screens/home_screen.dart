@@ -201,64 +201,61 @@ class _HomeScreenContent extends StatelessWidget {
   }
 
   Widget _buildQuickActions(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Quick Actions',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-        ),
-        const SizedBox(height: 16),
-        Card(
-          elevation: 0,
-          color: Theme.of(context)
-              .colorScheme
-              .surfaceContainerHighest
-              .withOpacity(0.3), // withValues(alpha: 0.3),
-          child: ListTile(
-            leading: Icon(
-              Icons.event_available_outlined,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            title: const Text('Players'),
-            subtitle: const Text('View all players'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => Helper.navigateWithFadeTransition(
-              context,
-              AppRoutes.players,
-              null,
-            ),
+    final controller = context.read<HomeController>();
+    final List<Widget> actions = [
+      Card(
+        elevation: 0,
+        color: Theme.of(context)
+            .colorScheme
+            .surfaceContainerHighest
+            .withOpacity(0.3),
+        child: ListTile(
+          leading: Icon(
+            Icons.event_available_outlined,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+          title: const Text('Players'),
+          subtitle: const Text('View all players'),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () => Helper.navigateWithFadeTransition(
+            context,
+            AppRoutes.players,
+            null,
           ),
         ),
-        Card(
-          elevation: 0,
-          color: Theme.of(context)
-              .colorScheme
-              .surfaceContainerHighest
-              .withOpacity(0.3), // withValues(alpha: 0.3),
-          child: ListTile(
-            leading: Icon(
-              Icons.location_on_outlined,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            title: const Text('Stadium Images'),
-            subtitle: const Text('View all stadium images'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => Helper.navigateWithFadeTransition(
-              context,
-              AppRoutes.stadium,
-              null,
-            ),
+      ),
+      Card(
+        elevation: 0,
+        color: Theme.of(context)
+            .colorScheme
+            .surfaceContainerHighest
+            .withOpacity(0.3),
+        child: ListTile(
+          leading: Icon(
+            Icons.location_on_outlined,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+          title: const Text('Stadium Images'),
+          subtitle: const Text('View all stadium images'),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () => Helper.navigateWithFadeTransition(
+            context,
+            AppRoutes.stadium,
+            null,
           ),
         ),
+      ),
+    ];
+
+    // Only add match data action for 'O' role
+    if (controller.user?.role == 'O') {
+      actions.add(
         Card(
           elevation: 0,
           color: Theme.of(context)
               .colorScheme
               .surfaceContainerHighest
-              .withOpacity(0.3), // withValues(alpha: 0.3),
+              .withOpacity(0.3),
           child: ListTile(
             leading: Icon(
               Icons.access_time_outlined,
@@ -274,6 +271,20 @@ class _HomeScreenContent extends StatelessWidget {
             ),
           ),
         ),
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Quick Actions',
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+        ),
+        const SizedBox(height: 16),
+        ...actions,
       ],
     );
   }
