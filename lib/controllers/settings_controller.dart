@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cricket/services/services.dart';
+import 'package:cricket/common/common.dart';
 
 class SettingsController extends ChangeNotifier {
   bool _isDarkMode = false;
+  ApiCallStatus apiStatus = ApiCallStatus.success;
   final SettingsManager _settingsManager = SettingsManager();
 
   SettingsController() {

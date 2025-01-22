@@ -134,206 +134,300 @@ class __MatchScreenContentState extends State<_MatchScreenContent> {
   Widget build(BuildContext context) {
     final matchController = context.watch<MatchController>();
     final playersController = context.watch<PlayersController>();
+    final theme = Theme.of(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Match Details'),
-        centerTitle: true,
-      ),
-      body: ApiHandleUiWidget(
-        apiCallStatus: matchController.apiStatus,
-        successWidget: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Dropdown for Match
-                  DropdownButton<MatchModel>(
-                    hint: const Text("Select Match"),
-                    value: _selectedMatch,
-                    onChanged: (MatchModel? newMatch) {
-                      setState(() {
-                        _selectedMatch = newMatch;
-                        _selectedTeam = null; // Reset team and player selection
-                        _selectedPlayer = null;
-                      });
-                    },
-                    items: matchController.matches.map((match) {
-                      return DropdownMenuItem(
-                        value: match,
-                        child: Text(
-                          '${match.team1.name} vs ${match.team2.name}',
-                        ),
-                      );
-                    }).toList(),
+    return ApiHandleUiWidget(
+      apiCallStatus: matchController.apiStatus,
+      successWidget: Scaffold(
+        appBar: AppBar(
+          title: const Text('Match Details Entry'),
+          centerTitle: true,
+        ),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Match Selection Section
+                _buildSectionHeader(context, 'Select Match', Icons.sports_cricket),
+                Card(
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-
-                  // Dropdown for Team (if a match is selected)
-                  if (_selectedMatch != null) ...[
-                    DropdownButton<TeamData>(
-                      hint: const Text("Select Team"),
-                      value: _selectedTeam,
-                      onChanged: (TeamData? newTeam) {
-                        setState(() {
-                          _selectedTeam = newTeam;
-                          _selectedPlayer = null; // Reset player selection
-                        });
-                        // Fetch players for the selected team
-                        if (newTeam != null) {
-                          playersController.fetchPlayersByIds(newTeam.players);
-                        }
-                      },
-                      items: [
-                        _selectedMatch!.team1,
-                        _selectedMatch!.team2,
-                      ].map((team) {
-                        return DropdownMenuItem(
-                          value: team,
-                          child: Text(team.name),
-                        );
-                      }).toList(),
-                    ),
-                  ],
-
-                  // Dropdown for Player (if a team is selected)
-                  if (_selectedTeam != null) ...[
-                    Builder(
-                      builder: (context) {
-                        final players = playersController.selectedPlayers;
-                        final apiStatus = playersController.apiStatus;
-
-                        // Debug print to understand the state
-                        debugPrint('Players count: ${players.length}');
-                        debugPrint('API Status: $apiStatus');
-
-                        // Handle different API statuses
-                        if (apiStatus == ApiCallStatus.loading) {
-                          return const Center(child: CircularProgressIndicator());
-                        }
-
-                        if (apiStatus == ApiCallStatus.error) {
-                          return Text(
-                            'Error fetching players',
-                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.red),
-                          );
-                        }
-
-                        if (players.isEmpty) {
-                          return Text(
-                            'No players found for this team',
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          );
-                        }
-
-                        // Dropdown for players
-                        return DropdownButton<int>(
-                          isExpanded: true,
-                          hint: const Text("Select Player"),
-                          value: _selectedPlayer,
-                          onChanged: (int? newPlayerId) {
-                            setState(() {
-                              _selectedPlayer = newPlayerId;
-                            });
-                          },
-                          items: players.map((player) {
-                            return DropdownMenuItem<int>(
-                              value: player.id,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        // Match Dropdown
+                        _buildDropdownWithLabel(
+                          context: context,
+                          label: 'Match',
+                          hint: 'Select a match',
+                          value: _selectedMatch,
+                          items: matchController.matches.map((match) {
+                            return DropdownMenuItem(
+                              value: match,
                               child: Text(
-                                '${player.name} (ID: ${player.id})', 
+                                '${match.team1.name} vs ${match.team2.name}',
                                 overflow: TextOverflow.ellipsis,
                               ),
                             );
                           }).toList(),
-                        );
-                      },
-                    ),
-                  ],
+                          onChanged: (MatchModel? newMatch) {
+                            setState(() {
+                              _selectedMatch = newMatch;
+                              _selectedTeam = null;
+                              _selectedPlayer = null;
+                            });
+                          },
+                        ),
 
-                  // Number input boxes for match details
-                  if (_selectedPlayer != null) ...[
-                    const SizedBox(height: 16),
-                    Text(
-                      'Match Details',
-                      style: Theme.of(context).textTheme.titleMedium,
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: _scoreController,
-                            keyboardType: TextInputType.number,
-                            decoration: InputDecoration(
-                              labelText: 'Score',
-                              border: OutlineInputBorder(),
-                            ),
+                        // Team Dropdown (if match selected)
+                        if (_selectedMatch != null) ...[
+                          const SizedBox(height: 16),
+                          _buildDropdownWithLabel(
+                            context: context,
+                            label: 'Team',
+                            hint: 'Select a team',
+                            value: _selectedTeam,
+                            items: [
+                              _selectedMatch!.team1,
+                              _selectedMatch!.team2,
+                            ].map((team) {
+                              return DropdownMenuItem(
+                                value: team,
+                                child: Text(team.name),
+                              );
+                            }).toList(),
+                            onChanged: (TeamData? newTeam) {
+                              setState(() {
+                                _selectedTeam = newTeam;
+                                _selectedPlayer = null;
+                              });
+                              if (newTeam != null) {
+                                playersController.fetchPlayersByIds(newTeam.players);
+                              }
+                            },
                           ),
-                        ),
-                        SizedBox(width: 8),
-                        Expanded(
-                          child: TextField(
-                            controller: _wicketsController,
-                            keyboardType: TextInputType.number,
-                            decoration: InputDecoration(
-                              labelText: 'Wickets',
-                              border: OutlineInputBorder(),
-                            ),
+                        ],
+
+                        // Player Dropdown (if team selected)
+                        if (_selectedTeam != null) ...[
+                          const SizedBox(height: 16),
+                          Builder(
+                            builder: (context) {
+                              final players = playersController.selectedPlayers;
+                              final apiStatus = playersController.apiStatus;
+
+                              if (apiStatus == ApiCallStatus.loading) {
+                                return const Center(child: CircularProgressIndicator());
+                              }
+
+                              if (apiStatus == ApiCallStatus.error) {
+                                return Text(
+                                  'Error fetching players',
+                                  style: theme.textTheme.bodyLarge?.copyWith(color: Colors.red),
+                                );
+                              }
+
+                              if (players.isEmpty) {
+                                return Text(
+                                  'No players found for this team',
+                                  style: theme.textTheme.bodyLarge,
+                                );
+                              }
+
+                              return _buildDropdownWithLabel(
+                                context: context,
+                                label: 'Player',
+                                hint: 'Select a player',
+                                value: _selectedPlayer,
+                                items: players.map((player) {
+                                  return DropdownMenuItem<int>(
+                                    value: player.id,
+                                    child: Text(
+                                      '${player.name} (ID: ${player.id})', 
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  );
+                                }).toList(),
+                                onChanged: (int? newPlayerId) {
+                                  setState(() {
+                                    _selectedPlayer = newPlayerId;
+                                  });
+                                },
+                              );
+                            },
                           ),
-                        ),
+                        ],
                       ],
                     ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: _ballsController,
-                            keyboardType: TextInputType.number,
-                            decoration: InputDecoration(
-                              labelText: 'Balls',
-                              border: OutlineInputBorder(),
+                  ),
+                ),
+
+                // Match Details Section
+                if (_selectedPlayer != null) ...[
+                  const SizedBox(height: 16),
+                  _buildSectionHeader(context, 'Match Performance', Icons.analytics_outlined),
+                  Card(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          // First Row: Score and Wickets
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _buildTextField(
+                                  controller: _scoreController,
+                                  label: 'Score',
+                                  icon: Icons.score,
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: _buildTextField(
+                                  controller: _wicketsController,
+                                  label: 'Wickets',
+                                  icon: Icons.sports_cricket,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          // Second Row: Balls and Runs
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _buildTextField(
+                                  controller: _ballsController,
+                                  label: 'Balls',
+                                  icon: Icons.timer,
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: _buildTextField(
+                                  controller: _runsController,
+                                  label: 'Runs',
+                                  icon: Icons.trending_up,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          // Extras TextField
+                          _buildTextField(
+                            controller: _extrasController,
+                            label: 'Extras',
+                            icon: Icons.add_box,
+                          ),
+                          const SizedBox(height: 24),
+                          // Submit Button
+                          ElevatedButton.icon(
+                            onPressed: () => _submitMatchDetails(context),
+                            icon: const Icon(Icons.send),
+                            label: const Text('Submit Match Details'),
+                            style: ElevatedButton.styleFrom(
+                              minimumSize: const Size(double.infinity, 50),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
                             ),
                           ),
-                        ),
-                        SizedBox(width: 8),
-                        Expanded(
-                          child: TextField(
-                            controller: _runsController,
-                            keyboardType: TextInputType.number,
-                            decoration: InputDecoration(
-                              labelText: 'Runs',
-                              border: OutlineInputBorder(),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    TextField(
-                      controller: _extrasController,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        labelText: 'Extras',
-                        border: OutlineInputBorder(),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () => _submitMatchDetails(context),
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: Size(double.infinity, 50),
-                      ),
-                      child: Text('Submit Match Details'),
-                    ),
-                  ],
+                  ),
                 ],
-              ),
+              ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  // Helper method to create section headers
+  Widget _buildSectionHeader(BuildContext context, String title, IconData icon) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: Row(
+        children: [
+          Icon(icon, color: theme.primaryColor),
+          const SizedBox(width: 8),
+          Text(
+            title,
+            style: theme.textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: theme.primaryColor,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Helper method to create dropdowns with labels
+  Widget _buildDropdownWithLabel<T>({
+    required BuildContext context,
+    required String label,
+    required String hint,
+    required T? value,
+    required List<DropdownMenuItem<T>> items,
+    required void Function(T?) onChanged,
+  }) {
+    final theme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: theme.textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 8),
+        DropdownButtonFormField<T>(
+          decoration: InputDecoration(
+            hintText: hint,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          ),
+          value: value,
+          onChanged: onChanged,
+          items: items,
+          isExpanded: true,
+        ),
+      ],
+    );
+  }
+
+  // Helper method to create text fields
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+  }) {
+    return TextField(
+      controller: controller,
+      keyboardType: TextInputType.number,
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
         ),
       ),
     );

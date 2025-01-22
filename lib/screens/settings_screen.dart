@@ -1,42 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cricket/controllers/controllers.dart';
+import 'package:cricket/ui/ui.dart';
+import 'package:cricket/common/common.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Settings'),
-      ),
-      body: Consumer<SettingsController>(
-        builder: (context, settingsController, child) {
-          return ListView(
-            children: [
-              // Theme Toggle
-              SwitchListTile(
-                title: const Text('Dark Mode'),
-                value: settingsController.isDarkMode,
-                onChanged: (_) => settingsController.toggleTheme(),
-              ),
-
-              // Delete Account Option
-              ListTile(
-                title: const Text('Delete Account'),
-                subtitle: const Text('Permanently remove your account'),
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete_forever, color: Colors.red),
-                  onPressed: () {
-                    _showDeleteAccountDialog(context, settingsController);
-                  },
+    return Consumer<SettingsController>(
+      builder: (context, settingsController, child) {
+        return ApiHandleUiWidget(
+          apiCallStatus: settingsController.apiStatus,
+          successWidget: Scaffold(
+            appBar: AppBar(
+              title: const Text('Settings'),
+            ),
+            body: ListView(
+              children: [
+                // Theme Toggle
+                SwitchListTile(
+                  title: const Text('Dark Mode'),
+                  value: settingsController.isDarkMode,
+                  onChanged: (_) => settingsController.toggleTheme(),
                 ),
-              ),
-            ],
-          );
-        },
-      ),
+
+                // Delete Account Option
+                ListTile(
+                  title: const Text('Delete Account'),
+                  subtitle: const Text('Permanently remove your account'),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.delete_forever, color: Colors.red),
+                    onPressed: () {
+                      _showDeleteAccountDialog(context, settingsController);
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 

@@ -84,15 +84,62 @@ class PlayerListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      elevation: 4,
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: ListTile(
-        title: Text(player.name),
-        subtitle: Text(
-          'Age: ${player.age} | Wickets: ${player.wickets}\n'
-          'Yearly Score: ${player.totalScoreYearly} | Daily Score: ${player.totalScoreDaily}',
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        leading: CircleAvatar(
+          backgroundColor: theme.colorScheme.primaryContainer,
+          child: Icon(
+            Icons.sports_cricket_outlined,
+            color: theme.colorScheme.primary,
+          ),
         ),
-        isThreeLine: true,
+        title: Text(
+          player.name,
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 4),
+            _buildPlayerStatRow(
+              icon: Icons.cake_outlined,
+              label: 'Age',
+              value: player.age.toString(),
+              theme: theme,
+            ),
+            _buildPlayerStatRow(
+              icon: Icons.trending_up,
+              label: 'Yearly Score',
+              value: player.totalScoreYearly.toString(),
+              theme: theme,
+            ),
+            _buildPlayerStatRow(
+              icon: Icons.today,
+              label: 'Daily Score',
+              value: player.totalScoreDaily.toString(),
+              theme: theme,
+            ),
+            _buildPlayerStatRow(
+              icon: Icons.sports_cricket,
+              label: 'Wickets',
+              value: player.wickets.toString(),
+              theme: theme,
+            ),
+          ],
+        ),
+        trailing: Icon(
+          Icons.chevron_right,
+          color: theme.colorScheme.secondary,
+        ),
         onTap: () {
           Navigator.pushNamed(
             context,
@@ -100,6 +147,33 @@ class PlayerListTile extends StatelessWidget {
             arguments: {'playerId': player.id},
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildPlayerStatRow({
+    required IconData icon,
+    required String label,
+    required String value,
+    required ThemeData theme,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Row(
+        children: [
+          Icon(
+            icon,
+            size: 16,
+            color: theme.colorScheme.secondary,
+          ),
+          const SizedBox(width: 8),
+          Text(
+            '$label: $value',
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurface.withOpacity(0.7),
+            ),
+          ),
+        ],
       ),
     );
   }

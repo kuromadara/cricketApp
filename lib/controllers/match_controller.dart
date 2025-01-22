@@ -91,7 +91,7 @@ class MatchController extends ChangeNotifier {
         formattedMatchDetails,
       );
 
-      if (response.statusCode == 201) {
+      if (response.statusCode == 200) {
         _apiStatus = ApiCallStatus.success;
         // Optional: You might want to update the matches list or perform additional actions
         PLog.info('Match details submitted successfully: $formattedMatchDetails');
