@@ -28,15 +28,10 @@ class MatchController extends ChangeNotifier {
        
 
         if (response.statusCode == 200) {
-      final data = response.data['data']; // Extract the 'data' key which contains the list of matches
-        // Ensure data is a List before processing
-        // if (data is List) {
+          final data = response.data['data'];
           _matches = (data as List).map((matchJson) => MatchModel.fromJson(matchJson)).toList();
-          // _matches =
-          //     data.map((matchJson) => MatchModel.fromJson(matchJson)).toList();
-
-          _apiStatus =
-              _matches.isNotEmpty ? ApiCallStatus.success : ApiCallStatus.empty;
+          _apiStatus = _matches.isNotEmpty ? ApiCallStatus.success : ApiCallStatus.empty;
+          notifyListeners();
         } else {
           // Handle unexpected response structure
           

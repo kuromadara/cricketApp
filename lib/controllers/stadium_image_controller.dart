@@ -9,10 +9,15 @@ import 'package:pretty_logger/pretty_logger.dart';
 class StadiumImageController extends ChangeNotifier {
   ApiCallStatus _apiStatus = ApiCallStatus.loading;
   String? _stadiumImageUrl;
+  bool _isLoading = false;
 
   ApiCallStatus get apiStatus => _apiStatus;
   String? get stadiumImageUrl => _stadiumImageUrl;
   MatchModel? _selectedMatch;
+
+  List<StadiumModel> _stadiums = [];
+
+  List<StadiumModel> get stadiums => _stadiums;
 
   Future<void> submitStadiumImage({
     required int cricketMatchId, 
@@ -24,13 +29,13 @@ class StadiumImageController extends ChangeNotifier {
       final formData = FormData.fromMap({
         'cricket_match_id': cricketMatchId.toString(),
         'stadium_name': stadiumName,
-        'image': imageData.files.first,
+        'image': imageData.files.first.value,
       });
 
       _apiStatus = ApiCallStatus.loading;
       notifyListeners();
 
-      final response = await ApiBaseHelper.post(
+      final response = await ApiBaseHelper.postMultipart(
         '${dotenv.env['AUTH_APP']}stadiums',
         formData,
       );
@@ -71,12 +76,37 @@ class StadiumImageController extends ChangeNotifier {
     notifyListeners();
   }
 
-  
+  Future<void> fetchStadiums() async {
+    if (_isLoading || _apiStatus == ApiCallStatus.success) return; 
+    _isLoading = true; 
+    try {
+        _apiStatus = ApiCallStatus.loading; 
+        notifyListeners();
 
-  // Reset the controller state
-  void reset() {
-    _apiStatus = ApiCallStatus.loading;
-    _stadiumImageUrl = null;
-    notifyListeners();
+        final response = await ApiBaseHelper.get('${dotenv.env['AUTH_APP']}stadiums');
+
+        if (response.statusCode == 200) {
+            final List<dynamic> stadiumsJson = response.data['data'];
+            _stadiums = stadiumsJson.map((json) => StadiumModel.fromJson(json)).toList();
+            _apiStatus = ApiCallStatus.success; 
+        } else {
+            PLog.error('Failed to fetch stadiums. Response: ${response.data}');
+            _apiStatus = ApiCallStatus.error; 
+        }
+    } catch (e) {
+        PLog.error('Error fetching stadiums: $e');
+        _apiStatus = ApiCallStatus.error; 
+    } finally {
+        _isLoading = false; 
+        notifyListeners(); 
+    }
   }
+
+  // Load image by resource_app env entry
+  String getStadiumImageUrl(String imagePath) {
+    final url = '${dotenv.env['RESOURCE_APP']}/$imagePath';
+    return url;
+  }
+
+  
 }
