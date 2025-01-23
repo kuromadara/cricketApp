@@ -24,7 +24,7 @@ class HomeController extends ChangeNotifier {
   }
 
   Future<void> checkSession() async {
-    try {
+    // try {
       bool hasSession = await SessionManagerServcie().hasSession();
 
       if (!hasSession) {
@@ -36,8 +36,16 @@ class HomeController extends ChangeNotifier {
       try {
         await ApiBaseHelper.get(
             '${dotenv.env['AUTH_APP']}${dotenv.env['CHECK_AUTH']}');
+            _apiStatus = ApiCallStatus.success;
+            PLog.info("User data is not null");
+            notifyListeners();
       } on DioException catch (error) {
+        PLog.info("DioException occurred: ${error.type}");
+        PLog.info("Error message: ${error.message}");
+        PLog.info("Error response: ${error.response?.data}");
+        PLog.info("Status code: ${error.response?.statusCode}");
         PLog.info("Im here");
+        
         switch (error.type) {
           case DioExceptionType.connectionError:
             _apiStatus = ApiCallStatus.networkError;
@@ -59,18 +67,20 @@ class HomeController extends ChangeNotifier {
       }
 
       final userData = await SessionManagerServcie().getUserData();
-
+      PLog.info("User data: $userData");
       if (userData != null) {
         _user = userData;
         _apiStatus = ApiCallStatus.success;
       } else {
+        PLog.info("User data is null");
         _apiStatus = ApiCallStatus.empty;
       }
       notifyListeners();
-    } catch (e) {
-      _apiStatus = ApiCallStatus.error;
-      notifyListeners();
-    }
+    // } catch (e) {
+    //   PLog.info("Error in catch: $e");
+    //   _apiStatus = ApiCallStatus.error;
+    //   notifyListeners();
+    // }
   }
 
   Future<LogoutResult> logout() async {
@@ -92,6 +102,11 @@ class HomeController extends ChangeNotifier {
         return LogoutResult.error('Logout failed');
       }
     } on DioException catch (error) {
+      PLog.info("DioException occurred: ${error.type}");
+      PLog.info("Error message: ${error.message}");
+      PLog.info("Error response: ${error.response?.data}");
+      PLog.info("Status code: ${error.response?.statusCode}");
+      
       String errorMessage = 'An error occurred during logout';
 
       switch (error.type) {

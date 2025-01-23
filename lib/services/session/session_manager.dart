@@ -2,6 +2,7 @@ import 'package:cricket/common/common.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:cricket/models/models.dart';
 import 'dart:convert';
+import 'package:pretty_logger/pretty_logger.dart';
 
 class SessionManagerServcie {
   late FlutterSecureStorage secureStorage;
@@ -49,6 +50,7 @@ class SessionManagerServcie {
 
   Future<void> saveUserData(User user) async {
     final userData = user.toJson();
+    PLog.info("User data on login: $userData");
     await secureStorage.write(key: keyUserData, value: jsonEncode(userData));
   }
 

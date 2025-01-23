@@ -38,7 +38,7 @@ class _HomeScreenContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = context.watch<HomeController>();
     // final masterDataProvider = context.watch<GlobalMasterDataProvider>();
-
+    PLog.info("Api status: ${controller.apiStatus}");
     if (controller.apiStatus == ApiCallStatus.empty ||
         controller.apiStatus == ApiCallStatus.error ||
         controller.apiStatus == ApiCallStatus.networkError) {

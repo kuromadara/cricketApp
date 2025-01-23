@@ -5,7 +5,7 @@ class User {
   final DateTime? emailVerifiedAt;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final String role;
+  final String? role;
 
   User({
     required this.id,
@@ -14,7 +14,7 @@ class User {
     this.emailVerifiedAt,
     required this.createdAt,
     required this.updatedAt,
-    required this.role,
+    this.role,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -27,7 +27,7 @@ class User {
           : null,
       createdAt: DateTime.parse(json['created_at']),
       updatedAt: DateTime.parse(json['updated_at']),
-      role: json['role'] as String,
+      role: json['role'] as String?,
     );
   }
 
