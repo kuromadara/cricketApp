@@ -37,7 +37,6 @@ class _EmptyDataWidgetState extends State<EmptyDataWidget> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Lottie Animation
           Center(
             child: SizedBox(
               width: 200,
@@ -45,9 +44,7 @@ class _EmptyDataWidgetState extends State<EmptyDataWidget> {
               child: Lottie.asset('assets/lottie/no_data.json'),
             ),
           ),
-
           const SizedBox(height: 20),
-          // Text Message
           const Text(
             'No data found',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),

@@ -8,34 +8,23 @@ import 'routes/routes.dart';
 import 'controllers/controllers.dart';
 import 'ui/ui.dart';
 
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
   ApiBaseHelper.setupDio();
 
-  // Request necessary permissions
   await _requestPermissions();
 
   runApp(const MainApp());
 }
 
-/// Request location and camera permissions
 Future<void> _requestPermissions() async {
-
   // FirebaseCrashlytics.instance.crash();
   // throw Exception();
-  // Request location permissions
-  final locationStatus = await Permission.location.request();
-  if (locationStatus != PermissionStatus.granted) {
-    // Handle permission denied
-    debugPrint('Location permission denied');
-  }
 
   // Request camera permissions
   final cameraStatus = await Permission.camera.request();
   if (cameraStatus != PermissionStatus.granted) {
-    // Handle permission denied
     debugPrint('Camera permission denied');
   }
 }

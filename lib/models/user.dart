@@ -1,17 +1,3 @@
-// {
-//   "user": {
-//     "id": 1,
-//     "name": "Alda Koelpin",
-//     "email": "ucarroll@example.net",
-//     "email_verified_at": "2025-01-21T14:00:16.000000Z",
-//     "created_at": "2025-01-21T14:00:32.000000Z",
-//     "updated_at": "2025-01-21T14:00:32.000000Z",
-//     "role": "O"
-//   },
-//   "token": "1|zWZ6ngXVC2fCCc4V0hFyfs2zkZEbbKdjfe45j0Qq963dc8d5"
-// }
-
-
 class User {
   final int id;
   final String name;
@@ -48,15 +34,11 @@ class User {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      
       'name': name,
       'email': email,
       'email_verified_at': emailVerifiedAt?.toIso8601String(),
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
-      
     };
   }
-
-  
 }

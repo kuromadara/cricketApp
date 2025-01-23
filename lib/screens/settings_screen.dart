@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cricket/controllers/controllers.dart';
 import 'package:cricket/ui/ui.dart';
-import 'package:cricket/common/common.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -19,14 +18,11 @@ class SettingsScreen extends StatelessWidget {
             ),
             body: ListView(
               children: [
-                // Theme Toggle
                 SwitchListTile(
                   title: const Text('Dark Mode'),
                   value: settingsController.isDarkMode,
                   onChanged: (_) => settingsController.toggleTheme(),
                 ),
-
-                // Delete Account Option
                 ListTile(
                   title: const Text('Delete Account'),
                   subtitle: const Text('Permanently remove your account'),
@@ -63,7 +59,6 @@ class SettingsScreen extends StatelessWidget {
             onPressed: () {
               settingsController.deleteAccount();
               Navigator.of(context).pop();
-              // Optionally navigate to login or show confirmation
             },
             child: const Text('Delete'),
           ),

@@ -15,11 +15,12 @@ class AppRoutes {
     home: (context) => const HomeScreen(),
     players: (context) => const PlayersScreen(),
     playerDetails: (context) {
-      final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+      final args =
+          ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
       return PlayerDetailsScreen(playerId: args['playerId']);
     },
     settings: (context) => const SettingsScreen(),
-    stadium: (context) =>  StadiumImageScreen(),
+    stadium: (context) => StadiumImageScreen(),
     match: (context) => const MatchScreen(),
   };
 }

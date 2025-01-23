@@ -19,7 +19,7 @@ class UserInfoCard extends StatelessWidget {
       color: Theme.of(context)
           .colorScheme
           .surfaceContainerHighest
-          .withOpacity(0.3), // withValues(alpha: 0.3),
+          .withOpacity(0.3),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Row(

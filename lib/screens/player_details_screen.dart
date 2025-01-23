@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cricket/controllers/controllers.dart';
 import 'package:cricket/models/models.dart';
-import 'package:cricket/common/common.dart';
 import 'package:cricket/ui/ui.dart';
 
 class PlayerDetailsScreen extends StatelessWidget {
   final int playerId;
 
-  const PlayerDetailsScreen({Key? key, required this.playerId}) : super(key: key);
+  const PlayerDetailsScreen({Key? key, required this.playerId})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +74,6 @@ class PlayerDetailsView extends StatelessWidget {
     return Stack(
       fit: StackFit.expand,
       children: [
-        // Gradient background
         DecoratedBox(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -87,7 +86,6 @@ class PlayerDetailsView extends StatelessWidget {
             ),
           ),
         ),
-        // Centered player avatar
         Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -100,9 +98,9 @@ class PlayerDetailsView extends StatelessWidget {
                   child: Text(
                     player.name.substring(0, 1).toUpperCase(),
                     style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                      color: Theme.of(context).primaryColor,
-                      fontWeight: FontWeight.bold,
-                    ),
+                          color: Theme.of(context).primaryColor,
+                          fontWeight: FontWeight.bold,
+                        ),
                   ),
                 ),
               ),
@@ -110,8 +108,8 @@ class PlayerDetailsView extends StatelessWidget {
               Text(
                 'Age: ${player.age}',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: Colors.white70,
-                ),
+                      color: Colors.white70,
+                    ),
               ),
             ],
           ),

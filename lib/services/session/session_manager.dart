@@ -63,5 +63,4 @@ class SessionManagerServcie {
   Future<void> deleteUserData() async {
     await secureStorage.delete(key: keyUserData);
   }
-
 }

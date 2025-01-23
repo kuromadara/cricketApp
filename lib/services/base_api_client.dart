@@ -22,14 +22,11 @@ class ApiBaseHelper {
 
   static final String baseUrl = dotenv.env['BASE_URL']!;
 
-  // get token from preferences
-
   static Future<Map<String, dynamic>> getHeaders() async {
     Map<String, dynamic> headers = {
       "Accept": "application/json",
     };
 
-    // Check if token exists in session, if yes, add it to headers
     if (await SessionManagerServcie().hasSession()) {
       String? token = await SessionManagerServcie().getToken();
       headers['Authorization'] = 'Bearer $token';
@@ -134,14 +131,11 @@ class ApiBaseHelper {
         data: formData,
         options: Options(headers: {
           ...await getHeaders(),
-          // Set the content type for multipart requests
           "Content-Type": "multipart/form-data",
         }),
       );
       return response;
     } on DioException catch (error) {
-      // dio error (api reach the server but not performed successfully
-
       switch (error.type) {
         case DioExceptionType.connectionError:
           throw DioException(
@@ -186,8 +180,6 @@ class ApiBaseHelper {
         options: Options(headers: await getHeaders()),
       );
     } on DioException catch (error) {
-      // dio error (api reach the server but not performed successfully
-
       switch (error.type) {
         case DioExceptionType.connectionError:
           throw DioException(
@@ -225,6 +217,4 @@ class ApiBaseHelper {
       }
     }
   }
-
-  // You can also add additional methods or configurations as needed.
 }

@@ -56,10 +56,10 @@ class _LoginScreenContent extends StatelessWidget {
       children: [
         const SizedBox(height: 40),
         Image.asset(
-          'assets/logo.png', // Path to your logo
-          height: 200, // Adjust the height as needed
+          'assets/logo.png',
+          height: 200,
         ),
-        const SizedBox(height: 20), // Space between logo and text
+        const SizedBox(height: 20),
         Text(
           'Welcome Back!',
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(

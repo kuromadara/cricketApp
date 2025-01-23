@@ -192,7 +192,6 @@ class _HomeScreenContent extends StatelessWidget {
             title: 'Email',
             value: user.email,
           ),
-          
           const SizedBox(height: 24),
           _buildQuickActions(context),
         ],
@@ -247,7 +246,6 @@ class _HomeScreenContent extends StatelessWidget {
       ),
     ];
 
-    // Only add match data action for 'O' role
     if (controller.user?.role == 'O') {
       actions.add(
         Card(

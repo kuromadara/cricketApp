@@ -38,7 +38,6 @@ class _NetworkErrorWidgetState extends State<NetworkErrorWidget> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Lottie Animation
             Center(
               child: SizedBox(
                 width: 200,
@@ -46,9 +45,7 @@ class _NetworkErrorWidgetState extends State<NetworkErrorWidget> {
                 child: Lottie.asset('assets/lottie/no_internet.json'),
               ),
             ),
-
             const SizedBox(height: 20),
-            // Text Message
             const Text(
               'Network Error',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),

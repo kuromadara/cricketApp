@@ -25,16 +25,15 @@ class MatchController extends ChangeNotifier {
       );
 
       if (response != null) {
-       
-
         if (response.statusCode == 200) {
           final data = response.data['data'];
-          _matches = (data as List).map((matchJson) => MatchModel.fromJson(matchJson)).toList();
-          _apiStatus = _matches.isNotEmpty ? ApiCallStatus.success : ApiCallStatus.empty;
+          _matches = (data as List)
+              .map((matchJson) => MatchModel.fromJson(matchJson))
+              .toList();
+          _apiStatus =
+              _matches.isNotEmpty ? ApiCallStatus.success : ApiCallStatus.empty;
           notifyListeners();
         } else {
-          // Handle unexpected response structure
-          
           _apiStatus = ApiCallStatus.error;
         }
       } else {
@@ -66,7 +65,6 @@ class MatchController extends ChangeNotifier {
 
   Future<void> submitMatchDetails(Map<String, dynamic> matchDetails) async {
     try {
-      // Convert numeric values to strings
       final formattedMatchDetails = {
         'cricket_match_id': matchDetails['cricket_match_id'].toString(),
         'player_id': matchDetails['player_id'].toString(),
@@ -88,17 +86,19 @@ class MatchController extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         _apiStatus = ApiCallStatus.success;
-        // Optional: You might want to update the matches list or perform additional actions
-        PLog.info('Match details submitted successfully: $formattedMatchDetails');
+
+        PLog.info(
+            'Match details submitted successfully: $formattedMatchDetails');
       } else {
         _apiStatus = ApiCallStatus.error;
-        PLog.error('Failed to submit match details. Response: ${response.data}');
+        PLog.error(
+            'Failed to submit match details. Response: ${response.data}');
         throw Exception('Failed to submit match details');
       }
       notifyListeners();
     } on DioException catch (error) {
       _apiStatus = ApiCallStatus.error;
-      // PrettyLogger.error('Dio Error submitting match details: ${error.response?.data}');
+
       _handleDioError(error);
       rethrow;
     } catch (e) {

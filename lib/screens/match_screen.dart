@@ -37,7 +37,6 @@ class __MatchScreenContentState extends State<_MatchScreenContent> {
   TeamData? _selectedTeam;
   int? _selectedPlayer;
 
-  // Text controllers for input fields
   final TextEditingController _scoreController = TextEditingController();
   final TextEditingController _wicketsController = TextEditingController();
   final TextEditingController _ballsController = TextEditingController();
@@ -46,7 +45,6 @@ class __MatchScreenContentState extends State<_MatchScreenContent> {
 
   @override
   void dispose() {
-    // Dispose controllers to prevent memory leaks
     _scoreController.dispose();
     _wicketsController.dispose();
     _ballsController.dispose();
@@ -55,11 +53,9 @@ class __MatchScreenContentState extends State<_MatchScreenContent> {
     super.dispose();
   }
 
-  // Method to submit match details
   void _submitMatchDetails(BuildContext context) {
     final matchController = context.read<MatchController>();
 
-    // Validate inputs
     if (_selectedMatch == null || _selectedPlayer == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -70,15 +66,17 @@ class __MatchScreenContentState extends State<_MatchScreenContent> {
       return;
     }
 
-    // Parse input values with error handling
     int? score = int.tryParse(_scoreController.text);
     int? wickets = int.tryParse(_wicketsController.text);
     int? balls = int.tryParse(_ballsController.text);
     int? runs = int.tryParse(_runsController.text);
     int? extras = int.tryParse(_extrasController.text);
 
-    // Validate numeric inputs
-    if (score == null || wickets == null || balls == null || runs == null || extras == null) {
+    if (score == null ||
+        wickets == null ||
+        balls == null ||
+        runs == null ||
+        extras == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Please enter valid numeric values'),
@@ -88,7 +86,6 @@ class __MatchScreenContentState extends State<_MatchScreenContent> {
       return;
     }
 
-    // Prepare match details data
     final matchDetailsData = {
       'cricket_match_id': _selectedMatch!.id,
       'player_id': _selectedPlayer,
@@ -97,12 +94,10 @@ class __MatchScreenContentState extends State<_MatchScreenContent> {
       'ball': balls,
       'runs': runs,
       'extras': extras,
-      'status': 'completed', // Default status as requested
+      'status': 'completed',
     };
 
-    // Call method to submit match details
     matchController.submitMatchDetails(matchDetailsData).then((_) {
-      // Success scenario
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Match details submitted successfully'),
@@ -110,7 +105,6 @@ class __MatchScreenContentState extends State<_MatchScreenContent> {
         ),
       );
 
-      // Reset input fields and selections
       _scoreController.clear();
       _wicketsController.clear();
       _ballsController.clear();
@@ -120,7 +114,6 @@ class __MatchScreenContentState extends State<_MatchScreenContent> {
         _selectedPlayer = null;
       });
     }).catchError((error) {
-      // Error scenario
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Failed to submit match details: ${error.toString()}'),
@@ -149,8 +142,8 @@ class __MatchScreenContentState extends State<_MatchScreenContent> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Match Selection Section
-                _buildSectionHeader(context, 'Select Match', Icons.sports_cricket),
+                _buildSectionHeader(
+                    context, 'Select Match', Icons.sports_cricket),
                 Card(
                   elevation: 4,
                   shape: RoundedRectangleBorder(
@@ -161,7 +154,6 @@ class __MatchScreenContentState extends State<_MatchScreenContent> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        // Match Dropdown
                         _buildDropdownWithLabel(
                           context: context,
                           label: 'Match',
@@ -184,8 +176,6 @@ class __MatchScreenContentState extends State<_MatchScreenContent> {
                             });
                           },
                         ),
-
-                        // Team Dropdown (if match selected)
                         if (_selectedMatch != null) ...[
                           const SizedBox(height: 16),
                           _buildDropdownWithLabel(
@@ -208,13 +198,12 @@ class __MatchScreenContentState extends State<_MatchScreenContent> {
                                 _selectedPlayer = null;
                               });
                               if (newTeam != null) {
-                                playersController.fetchPlayersByIds(newTeam.players);
+                                playersController
+                                    .fetchPlayersByIds(newTeam.players);
                               }
                             },
                           ),
                         ],
-
-                        // Player Dropdown (if team selected)
                         if (_selectedTeam != null) ...[
                           const SizedBox(height: 16),
                           Builder(
@@ -223,13 +212,15 @@ class __MatchScreenContentState extends State<_MatchScreenContent> {
                               final apiStatus = playersController.apiStatus;
 
                               if (apiStatus == ApiCallStatus.loading) {
-                                return const Center(child: CircularProgressIndicator());
+                                return const Center(
+                                    child: CircularProgressIndicator());
                               }
 
                               if (apiStatus == ApiCallStatus.error) {
                                 return Text(
                                   'Error fetching players',
-                                  style: theme.textTheme.bodyLarge?.copyWith(color: Colors.red),
+                                  style: theme.textTheme.bodyLarge
+                                      ?.copyWith(color: Colors.red),
                                 );
                               }
 
@@ -249,7 +240,7 @@ class __MatchScreenContentState extends State<_MatchScreenContent> {
                                   return DropdownMenuItem<int>(
                                     value: player.id,
                                     child: Text(
-                                      '${player.name} (ID: ${player.id})', 
+                                      '${player.name} (ID: ${player.id})',
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   );
@@ -267,11 +258,10 @@ class __MatchScreenContentState extends State<_MatchScreenContent> {
                     ),
                   ),
                 ),
-
-                // Match Details Section
                 if (_selectedPlayer != null) ...[
                   const SizedBox(height: 16),
-                  _buildSectionHeader(context, 'Match Performance', Icons.analytics_outlined),
+                  _buildSectionHeader(
+                      context, 'Match Performance', Icons.analytics_outlined),
                   Card(
                     elevation: 4,
                     shape: RoundedRectangleBorder(
@@ -282,7 +272,6 @@ class __MatchScreenContentState extends State<_MatchScreenContent> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          // First Row: Score and Wickets
                           Row(
                             children: [
                               Expanded(
@@ -303,7 +292,6 @@ class __MatchScreenContentState extends State<_MatchScreenContent> {
                             ],
                           ),
                           const SizedBox(height: 16),
-                          // Second Row: Balls and Runs
                           Row(
                             children: [
                               Expanded(
@@ -324,14 +312,12 @@ class __MatchScreenContentState extends State<_MatchScreenContent> {
                             ],
                           ),
                           const SizedBox(height: 16),
-                          // Extras TextField
                           _buildTextField(
                             controller: _extrasController,
                             label: 'Extras',
                             icon: Icons.add_box,
                           ),
                           const SizedBox(height: 24),
-                          // Submit Button
                           ElevatedButton.icon(
                             onPressed: () => _submitMatchDetails(context),
                             icon: const Icon(Icons.send),
@@ -356,8 +342,8 @@ class __MatchScreenContentState extends State<_MatchScreenContent> {
     );
   }
 
-  // Helper method to create section headers
-  Widget _buildSectionHeader(BuildContext context, String title, IconData icon) {
+  Widget _buildSectionHeader(
+      BuildContext context, String title, IconData icon) {
     final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12),
@@ -377,7 +363,6 @@ class __MatchScreenContentState extends State<_MatchScreenContent> {
     );
   }
 
-  // Helper method to create dropdowns with labels
   Widget _buildDropdownWithLabel<T>({
     required BuildContext context,
     required String label,
@@ -403,7 +388,8 @@ class __MatchScreenContentState extends State<_MatchScreenContent> {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
             ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           ),
           value: value,
           onChanged: onChanged,
@@ -414,7 +400,6 @@ class __MatchScreenContentState extends State<_MatchScreenContent> {
     );
   }
 
-  // Helper method to create text fields
   Widget _buildTextField({
     required TextEditingController controller,
     required String label,

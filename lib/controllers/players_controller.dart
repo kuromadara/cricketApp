@@ -44,7 +44,7 @@ class PlayersController extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         final data = response.data;
-        
+
         if (page == 1) {
           _players.clear();
         }
@@ -56,10 +56,8 @@ class PlayersController extends ChangeNotifier {
         if (page == null || page == _currentPage) {
           _players.addAll(newPlayers);
         } else if (page > _currentPage) {
-          // Adding to end
           _players.addAll(newPlayers);
         } else {
-          // Adding to beginning
           _players.insertAll(0, newPlayers);
         }
 
@@ -67,9 +65,9 @@ class PlayersController extends ChangeNotifier {
         _lastPage = data['meta']['last_page'];
         _perPage = data['meta']['per_page'];
 
-        // Only update status to success/empty if this is initial load or refresh
         if (page == 1 || _apiStatus == ApiCallStatus.loading) {
-          _apiStatus = _players.isEmpty ? ApiCallStatus.empty : ApiCallStatus.success;
+          _apiStatus =
+              _players.isEmpty ? ApiCallStatus.empty : ApiCallStatus.success;
         }
       } else {
         if (page == 1) {
@@ -122,10 +120,8 @@ class PlayersController extends ChangeNotifier {
   }
 
   Future<void> fetchPlayersByIds(List<int> playerIds) async {
-    // Clear previous selected players
     _selectedPlayers.clear();
 
-    // Validate input
     if (playerIds.isEmpty) {
       debugPrint('No player IDs provided');
       _apiStatus = ApiCallStatus.empty;
@@ -151,8 +147,7 @@ class PlayersController extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         final data = response.data;
-        
-        // Ensure data is not null and is a list
+
         if (data != null && data['data'] is List) {
           _selectedPlayers = (data['data'] as List)
               .map((item) {
@@ -163,13 +158,13 @@ class PlayersController extends ChangeNotifier {
                   return null;
                 }
               })
-              .whereType<Player>() // Filter out any null values
+              .whereType<Player>()
               .toList();
 
           debugPrint('Fetched players count: ${_selectedPlayers.length}');
 
-          _apiStatus = _selectedPlayers.isEmpty 
-              ? ApiCallStatus.empty 
+          _apiStatus = _selectedPlayers.isEmpty
+              ? ApiCallStatus.empty
               : ApiCallStatus.success;
         } else {
           debugPrint('Invalid response data format');

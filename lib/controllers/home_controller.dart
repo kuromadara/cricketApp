@@ -13,11 +13,6 @@ class HomeController extends ChangeNotifier {
   ApiCallStatus get apiStatus => _apiStatus;
   User? get user => _user;
 
-  /// Set the initial user for the home screen.
-  ///
-  /// If the user is not null, it will set the user and the api status to success.
-  /// If the user is null, it will check the session and set the api status accordingly.
-  ///
   void setInitialUser(User? initialUser) async {
     if (initialUser != null) {
       _user = initialUser;
@@ -28,25 +23,9 @@ class HomeController extends ChangeNotifier {
     }
   }
 
-  /// Checks the current session status.
-  ///
-  /// This function first verifies if there is a session available locally.
-  /// If a session is not available, it sets the API status to empty and exits.
-  ///
-  /// If a session is available, it performs a server-side authentication check.
-  /// In case of a connection error or a bad response from the server, it deletes
-  /// the session and updates the API status accordingly.
-  ///
-  /// If the session is valid, it retrieves user data from secure storage and
-  /// updates the user information and API status to success. If any user data
-  /// is missing, it sets the API status to empty.
-  ///
-  /// In the event of any other errors, it sets the API status to error.
   Future<void> checkSession() async {
     try {
       bool hasSession = await SessionManagerServcie().hasSession();
-
-      // check with server if session is availablile if not logout and go to login screen
 
       if (!hasSession) {
         _apiStatus = ApiCallStatus.empty;
@@ -79,9 +58,8 @@ class HomeController extends ChangeNotifier {
         return;
       }
 
-      // Get user data from secure storage
       final userData = await SessionManagerServcie().getUserData();
-      
+
       if (userData != null) {
         _user = userData;
         _apiStatus = ApiCallStatus.success;
@@ -95,11 +73,6 @@ class HomeController extends ChangeNotifier {
     }
   }
 
-  /// Logs out the user and clears the session.
-  ///
-  /// Returns a [LogoutResult] with a success message if the logout is successful,
-  /// or an error message if the logout fails.
-  ///
   Future<LogoutResult> logout() async {
     _apiStatus = ApiCallStatus.loading;
     notifyListeners();

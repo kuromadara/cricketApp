@@ -37,7 +37,6 @@ class _SomeThingErrorWidgetState extends State<SomeThingErrorWidget> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Lottie Animation
           Center(
             child: SizedBox(
               width: 200,
@@ -45,9 +44,7 @@ class _SomeThingErrorWidgetState extends State<SomeThingErrorWidget> {
               child: Lottie.asset('assets/lottie/something.json'),
             ),
           ),
-
           const SizedBox(height: 20),
-          // Text Message
           const Text(
             'Something Went Wrong!',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),

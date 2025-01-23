@@ -11,7 +11,6 @@ class FadePageRoute<T> extends PageRouteBuilder<T> {
             Animation<double> animation,
             Animation<double> secondaryAnimation,
           ) {
-            // Pass the arguments to the page
             return page;
           },
           transitionsBuilder: (
@@ -34,7 +33,6 @@ class FadePageRoute<T> extends PageRouteBuilder<T> {
               child: child,
             );
           },
-          // Pass the arguments to the page
           settings: RouteSettings(arguments: arguments),
         );
 }

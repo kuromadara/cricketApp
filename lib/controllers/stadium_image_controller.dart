@@ -19,13 +19,11 @@ class StadiumImageController extends ChangeNotifier {
 
   List<StadiumModel> get stadiums => _stadiums;
 
-  Future<void> submitStadiumImage({
-    required int cricketMatchId, 
-    required String stadiumName, 
-    required FormData imageData
-  }) async {
+  Future<void> submitStadiumImage(
+      {required int cricketMatchId,
+      required String stadiumName,
+      required FormData imageData}) async {
     try {
-      // Prepare the form data
       final formData = FormData.fromMap({
         'cricket_match_id': cricketMatchId.toString(),
         'stadium_name': stadiumName,
@@ -46,7 +44,8 @@ class StadiumImageController extends ChangeNotifier {
         PLog.info('Stadium image submitted successfully');
       } else {
         _apiStatus = ApiCallStatus.error;
-        PLog.error('Failed to submit stadium image. Response: ${response.data}');
+        PLog.error(
+            'Failed to submit stadium image. Response: ${response.data}');
         throw Exception('Failed to submit stadium image');
       }
       notifyListeners();
@@ -77,36 +76,35 @@ class StadiumImageController extends ChangeNotifier {
   }
 
   Future<void> fetchStadiums() async {
-    if (_isLoading || _apiStatus == ApiCallStatus.success) return; 
-    _isLoading = true; 
+    if (_isLoading || _apiStatus == ApiCallStatus.success) return;
+    _isLoading = true;
     try {
-        _apiStatus = ApiCallStatus.loading; 
-        notifyListeners();
+      _apiStatus = ApiCallStatus.loading;
+      notifyListeners();
 
-        final response = await ApiBaseHelper.get('${dotenv.env['AUTH_APP']}stadiums');
+      final response =
+          await ApiBaseHelper.get('${dotenv.env['AUTH_APP']}stadiums');
 
-        if (response.statusCode == 200) {
-            final List<dynamic> stadiumsJson = response.data['data'];
-            _stadiums = stadiumsJson.map((json) => StadiumModel.fromJson(json)).toList();
-            _apiStatus = ApiCallStatus.success; 
-        } else {
-            PLog.error('Failed to fetch stadiums. Response: ${response.data}');
-            _apiStatus = ApiCallStatus.error; 
-        }
+      if (response.statusCode == 200) {
+        final List<dynamic> stadiumsJson = response.data['data'];
+        _stadiums =
+            stadiumsJson.map((json) => StadiumModel.fromJson(json)).toList();
+        _apiStatus = ApiCallStatus.success;
+      } else {
+        PLog.error('Failed to fetch stadiums. Response: ${response.data}');
+        _apiStatus = ApiCallStatus.error;
+      }
     } catch (e) {
-        PLog.error('Error fetching stadiums: $e');
-        _apiStatus = ApiCallStatus.error; 
+      PLog.error('Error fetching stadiums: $e');
+      _apiStatus = ApiCallStatus.error;
     } finally {
-        _isLoading = false; 
-        notifyListeners(); 
+      _isLoading = false;
+      notifyListeners();
     }
   }
 
-  // Load image by resource_app env entry
   String getStadiumImageUrl(String imagePath) {
     final url = '${dotenv.env['RESOURCE_APP']}/$imagePath';
     return url;
   }
-
-  
 }

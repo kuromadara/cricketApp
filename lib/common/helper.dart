@@ -3,9 +3,6 @@ import 'package:cricket/ui/ui.dart';
 import 'package:cricket/routes/routes.dart';
 
 class Helper {
- 
- 
-
   static void navigateWithFadeTransition(
     BuildContext context,
     String routeName,
@@ -19,8 +16,4 @@ class Helper {
       ),
     );
   }
-
- 
-
-  
 }

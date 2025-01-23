@@ -1,12 +1,9 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:cricket/controllers/controllers.dart';
-import 'package:cricket/models/models.dart';
 import 'package:cricket/common/common.dart';
 import 'package:cricket/screens/screens.dart';
-import 'package:dio/dio.dart';
 import 'package:cricket/ui/ui.dart';
 
 class StadiumImageScreen extends StatelessWidget {
@@ -25,10 +22,8 @@ class StadiumImageScreen extends StatelessWidget {
 class _StadiumImageScreenContent extends StatelessWidget {
   final ImagePicker _picker = ImagePicker();
 
-  // Controllers for text fields
   final TextEditingController _stadiumNameController = TextEditingController();
 
-  // To store the picked image
   XFile? _pickedImage;
 
   @override
@@ -36,7 +31,6 @@ class _StadiumImageScreenContent extends StatelessWidget {
     final stadiumImageController = context.watch<StadiumImageController>();
     final matchController = context.watch<MatchController>();
 
-    // Call fetchStadiums after the build is complete only if the API status is not success
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (stadiumImageController.apiStatus != ApiCallStatus.success) {
         stadiumImageController.fetchStadiums();
@@ -46,11 +40,12 @@ class _StadiumImageScreenContent extends StatelessWidget {
     return ApiHandleUiWidget(
       apiCallStatus: stadiumImageController.apiStatus,
       successWidget: Scaffold(
-        appBar: AppBar(title: Text('Stadium Images')),  
+        appBar: AppBar(title: Text('Stadium Images')),
         body: _StadiumImageGrid(stadiumImageController: stadiumImageController),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Navigator.of(context).push(MaterialPageRoute(builder: (context) => UploadStadiumImageScreen()));
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => UploadStadiumImageScreen()));
           },
           child: Icon(Icons.add_a_photo),
         ),
@@ -83,6 +78,20 @@ class _StadiumImageGrid extends StatelessWidget {
                 child: Image.network(
                   stadiumImageController.getStadiumImageUrl(stadium.image),
                   fit: BoxFit.cover,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Center(
+                      child: CircularProgressIndicator(
+                        value: loadingProgress.expectedTotalBytes != null
+                            ? loadingProgress.cumulativeBytesLoaded /
+                                loadingProgress.expectedTotalBytes!
+                            : null,
+                      ),
+                    );
+                  },
+                  errorBuilder: (context, error, stackTrace) => Center(
+                    child: Icon(Icons.error_outline, color: Colors.red),
+                  ),
                 ),
               ),
               Padding(

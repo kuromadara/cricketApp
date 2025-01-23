@@ -34,11 +34,10 @@ class PlayersView extends StatelessWidget {
         body: NotificationListener<ScrollNotification>(
           onNotification: (ScrollNotification scrollInfo) {
             if (scrollInfo is ScrollEndNotification) {
-              if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
-                // At the bottom of the list
+              if (scrollInfo.metrics.pixels ==
+                  scrollInfo.metrics.maxScrollExtent) {
                 controller.loadNextPage();
               } else if (scrollInfo.metrics.pixels == 0) {
-                // At the top of the list
                 controller.loadPreviousPage();
               }
             }
@@ -57,7 +56,8 @@ class PlayersView extends StatelessWidget {
                   ),
                 SliverList(
                   delegate: SliverChildBuilderDelegate(
-                    (context, index) => PlayerListTile(player: controller.players[index]),
+                    (context, index) =>
+                        PlayerListTile(player: controller.players[index]),
                     childCount: controller.players.length,
                   ),
                 ),

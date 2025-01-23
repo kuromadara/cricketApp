@@ -7,11 +7,9 @@ class SettingsManager {
 
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
-  // Keys for secure storage
   static const String _themeKey = 'app_theme_mode';
   static const String _accountDeleteKey = 'account_delete_preference';
 
-  // Theme Mode Management
   Future<void> setThemeMode(bool isDarkMode) async {
     await _secureStorage.write(key: _themeKey, value: isDarkMode.toString());
   }
@@ -21,7 +19,6 @@ class SettingsManager {
     return themeValue == 'true';
   }
 
-  // Account Deletion Preference
   Future<void> setAccountDeletionPreference(bool canDelete) async {
     await _secureStorage.write(
         key: _accountDeleteKey, value: canDelete.toString());
@@ -33,7 +30,6 @@ class SettingsManager {
     return deleteValue == 'true';
   }
 
-  // Clear all settings
   Future<void> clearAllSettings() async {
     await _secureStorage.deleteAll();
   }
